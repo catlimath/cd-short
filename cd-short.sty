@@ -1,0 +1,361 @@
+\ProvidesPackage{cd-short}
+
+
+\RequirePackage{tikz-cd}
+\RequirePackage{xparse}
+\RequirePackage{wrapfig}
+
+% ARROW VISUAL ADJUSTMENTS
+\tikzcdset{every label/.append style = {font = \footnotesize}} % makes arrow labels slightly bigger
+\tikzcdset{every label/.append style = {inner sep=1ex}} % makes labels slightly further from arrow
+
+%-------------------------------------------
+%%%%%%%%%%%%%%%% DIAGRAM ARROWS %%%%%%%%%%%%%%%%
+
+% to, ->
+\NewDocumentCommand {\arr} { O{} m m O{} E{^}{} O{} E{_}{} } {
+	\IfNoValueTF{#5}
+	{
+		\IfNoValueTF{#7}
+		{\ar[#1, from=#2, to=#3]}
+		{\ar[#1, from=#2, to=#3, "#7"' {#6}]}
+	}
+	{
+		\IfNoValueTF{#7}
+		{\ar[#1, from=#2, to=#3, "#5" {#4}]}
+		{\ar[#1, from=#2, to=#3, "#5" {#4}, "#7"' {#6}]}
+	}}
+% from, <-
+\NewDocumentCommand {\rra} { O{} m m O{} E{^}{{}} O{} E{_}{{}} } {\ar[#1, from=#3, to=#2, "#5" {#4}, "#7"' {#6}]} 
+% weak equivalence, ->^(sim)
+\NewDocumentCommand {\we} { O{} m m O{} E{^}{} O{} E{_}{{}} } {
+	\IfValueTF{#5}
+	{\ar[phantom, #1, from=#2, to=#3, "\mathclap{\sim}" inner sep = 1ex, sloped, shift left]\ar[#1, from=#2, to=#3, "#5" {#4, inner sep=2ex}, "#7"' {#6}]}
+	{\ar[phantom, #1, from=#2, to=#3, "\mathclap{\sim}" inner sep = 1ex, sloped, shift left]\ar[#1, from=#2, to=#3, "#7"' {#6}]}
+} 
+% cofibration, hook->
+\NewDocumentCommand {\cof} { O{} m m O{} E{^}{{}} O{} E{_}{{}} } {\ar[hook, #1, from=#2, to=#3, "#5" {#4}, "#7"' {#6}]} 
+% acyclic cofibration, hook->^(sim)
+\NewDocumentCommand {\acof} { O{} m m O{} E{^}{} O{} E{_}{{}} } {
+	\IfValueTF{#5}
+	{\ar[phantom, #1, from=#2, to=#3, "\mathclap{\sim}" inner sep = 1ex, sloped, shift left]\ar[hook, #1, from=#2, to=#3, "#5" {#4, inner sep=2ex}, "#7"' {#6}]}
+	{\ar[phantom, #1, from=#2, to=#3, "\mathclap{\sim}" inner sep = 1ex, sloped, shift left]\ar[hook, #1, from=#2, to=#3, "#7"' {#6}]}
+} 
+% fibration, ->>
+\NewDocumentCommand {\fib} { O{} m m O{} E{^}{{}} O{} E{_}{{}} } {\ar[two heads, #1, from=#2, to=#3, "#5" {#4}, "#7"' {#6}]} 
+% acyclic fibration, ->>^(sim)
+\NewDocumentCommand {\afib} { O{} m m O{} E{^}{} O{} E{_}{{}} } {
+	\IfValueTF{#5}
+	{\ar[phantom, #1, from=#2, to=#3, "\mathclap{\sim}" inner sep = 1ex, sloped, shift left]\ar[two heads, #1, from=#2, to=#3, "#5" {#4, inner sep=2ex}, "#7"' {#6}]}
+	{\ar[phantom, #1, from=#2, to=#3, "\mathclap{\sim}" inner sep = 1ex, sloped, shift left]\ar[two heads, #1, from=#2, to=#3, "#7"' {#6}]}
+} 
+% fibration cofibration, hook->>
+\NewDocumentCommand {\fibcof} { O{} m m O{} E{^}{{}} O{} E{_}{{}} } {\ar[hook, two heads, #1, from=#2, to=#3, "#5" {#4}, "#7"' {#6}]} 
+% acyclic fibration cofibration, hook->>^(sim)
+\NewDocumentCommand {\afibcof} { O{} m m O{} E{^}{} O{} E{_}{{}} } {
+	\IfValueTF{#5}
+	{\ar[phantom, #1, from=#2, to=#3, "\mathclap{\sim}" inner sep = 1ex, sloped, shift left]\ar[hook, two heads, #1, from=#2, to=#3, "#5" {#4, inner sep=2ex}, "#7"' {#6}]}
+	{\ar[phantom, #1, from=#2, to=#3, "\mathclap{\sim}" inner sep = 1ex, sloped, shift left]\ar[hook, two heads, #1, from=#2, to=#3, "#7"' {#6}]}
+} 
+% natural transformation, =>
+\NewDocumentCommand {\Arr} { O{} m m O{} E{^}{{}} O{} E{_}{{}} } {\ar[Rightarrow, #1, from=#2, to=#3, "#5" {#4}, "#7"' {#6}]} 
+% equality, =
+\NewDocumentCommand {\Eq} { O{} m m O{} E{^}{{}} O{} E{_}{{}} } {\ar[equal, #1, from=#2, to=#3, "#5" {#4}, "#7"' {#6}]} 
+% dashed to, - - ->
+\NewDocumentCommand {\sub} { O{} m m O{} E{^}{{}} O{} E{_}{{}} } {\ar[dashed, #1, from=#2, to=#3, "#5" {#4}, "#7"' {#6}]} 
+% squiggly arrow, ~~~>
+\NewDocumentCommand {\leads} { O{} m m O{} E{^}{{}} O{} E{_}{{}} } {\ar[squiggly, #1, from=#2, to=#3, "#5" {#4}, "#7"' {#6}]} 
+% maps to, |->
+\NewDocumentCommand {\maps} { O{} m m O{} E{^}{{}} O{} E{_}{{}} } {\ar[mapsto, #1, from=#2, to=#3, "#5" {#4}, "#7"' {#6}]} 
+% double maps to, |=>
+\NewDocumentCommand {\Maps} { O{} m m O{} E{^}{{}} O{} E{_}{{}} } {\ar[Mapsto, #1, from=#2, to=#3, "#5" {#4}, "#7"' {#6}]} 
+
+%-------------------------------------------
+%%%%%%%%%%%%%%%% IN-LINE ARROWS %%%%%%%%%%%%%%%%
+% to, ->
+\NewDocumentCommand {\rarr} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr{1-1}{1-2}[inner sep=0.5ex]^{#2}[inner sep=0.5ex]_{#3}\end{tikzcd}}
+%hjbhkbkjbkjbkj^^^
+\NewDocumentCommand {\larr} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr{1-2}{1-1}[inner sep=0.5ex]^{#3}[inner sep=0.5ex]_{#2}\end{tikzcd}} 
+% from, <-
+\NewDocumentCommand {\rrra} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr{1-2}{1-1}[inner sep=0.5ex]^{#3}[inner sep=0.5ex]_{#2}\end{tikzcd}}
+\NewDocumentCommand {\lrra} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr{1-1}{1-2}[inner sep=0.5ex]^{#2}[inner sep=0.5ex]_{#3}\end{tikzcd}}
+% weak equivalence, ->^(sim)
+\NewDocumentCommand {\rwe} { O{1.5em} E{^}{} E{_}{} } {
+	\IfValueTF{#2}
+	{\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {}
+		\arr[phantom,shift left]{1-1}{1-2}[inner sep = 1ex]^{\mathclap{\sim}}
+		\arr{1-1}{1-2}[inner sep=1.5ex]^{#2}[inner sep=0.5ex]_{#3}
+	\end{tikzcd}}
+	{\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {}
+			\arr[phantom,shift left]{1-1}{1-2}[inner sep = 1ex]^{\mathclap{\sim}}
+			\arr{1-1}{1-2}[inner sep=0.5ex]_{#3}
+	\end{tikzcd}}
+} 
+\NewDocumentCommand {\lwe} { O{1.5em} E{^}{} E{_}{} } {
+	\IfValueTF{#2}
+	{\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {}
+			\arr[phantom,shift right]{1-2}{1-1}[inner sep = 1ex, font = \tiny]_{\mathclap{\sim}}
+			\arr{1-2}{1-1}[inner sep=0.5ex]^{#3}[inner sep=1.5ex]_{#2}
+	\end{tikzcd}}
+	{\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {}
+			\arr[phantom,shift right]{1-2}{1-1}[inner sep = 1ex, font = \tiny]_{\mathclap{\sim}}
+			\arr{1-2}{1-1}^{#3}
+	\end{tikzcd}}
+} 
+% cofibration, hook->
+\NewDocumentCommand {\rcof} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr[hook]{1-1}{1-2}[inner sep=0.5ex]^{#2}[inner sep=0.5ex]_{#3}\end{tikzcd}}
+\NewDocumentCommand {\lcof} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr[hook]{1-2}{1-1}[inner sep=0.5ex]^{#3}[inner sep=0.5ex]_{#2}\end{tikzcd}} 
+% acyclic cofibration, hook->^(sim)
+\NewDocumentCommand {\racof} { O{1.5em} E{^}{} E{_}{} } {
+	\IfValueTF{#2}
+	{\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {}
+			\arr[phantom,shift left]{1-1}{1-2}[inner sep = 1ex]^{\mathclap{\sim}}
+			\arr[hook]{1-1}{1-2}[inner sep=1.5ex]^{#2}[inner sep=0.5ex]_{#3}
+	\end{tikzcd}}
+	{\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {}
+			\arr[phantom,shift left]{1-1}{1-2}[inner sep = 1ex]^{\mathclap{\sim}}
+			\arr[hook]{1-1}{1-2}[inner sep=0.5ex]_{#3}
+	\end{tikzcd}}
+} 
+\NewDocumentCommand {\lacof} { O{1.5em} E{^}{} E{_}{} } {
+	\IfValueTF{#2}
+	{\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {}
+			\arr[phantom,shift right]{1-2}{1-1}[inner sep = 1ex]_{\mathclap{\sim}}
+			\arr[hook]{1-2}{1-1}[inner sep=0.5ex]^{#3}[inner sep=1.5ex]_{#2}
+	\end{tikzcd}}
+	{\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {}
+			\arr[phantom,shift right]{1-2}{1-1}[inner sep = 1ex]_{\mathclap{\sim}}
+			\arr[hook]{1-2}{1-1}[inner sep=0.5ex]^{#3}
+	\end{tikzcd}}
+} 
+% fibration, ->>
+\NewDocumentCommand {\rfib} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr[two heads]{1-1}{1-2}[inner sep=0.5ex]^{#2}[inner sep=0.5ex]_{#3}\end{tikzcd}}
+\NewDocumentCommand {\lfib} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr[two heads]{1-2}{1-1}[inner sep=0.5ex]^{#3}[inner sep=0.5ex]_{#2}\end{tikzcd}} 
+% acyclic fibration, ->>^(sim)
+\NewDocumentCommand {\rafib} { O{1.5em} E{^}{} E{_}{} } {
+	\IfValueTF{#2}
+	{\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {}
+			\arr[phantom,shift left]{1-1}{1-2}[inner sep = 1ex]^{\mathclap{\sim}}
+			\arr[two heads]{1-1}{1-2}[inner sep=1.5ex]^{#2}[inner sep=0.5ex]_{#3}
+	\end{tikzcd}}
+	{\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {}
+			\arr[phantom,shift left]{1-1}{1-2}[inner sep = 1ex]^{\mathclap{\sim}}
+			\arr[two heads]{1-1}{1-2}[inner sep=0.5ex]_{#3}
+	\end{tikzcd}}
+} 
+\NewDocumentCommand {\lafib} { O{1.5em} E{^}{} E{_}{} } {
+	\IfValueTF{#2}
+	{\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {}
+			\arr[phantom,shift right]{1-2}{1-1}[inner sep = 1ex]_{\mathclap{\sim}}
+			\arr[two heads]{1-2}{1-1}[inner sep=0.5ex]^{#3}[inner sep=1.5ex]_{#2}
+	\end{tikzcd}}
+	{\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {}
+			\arr[phantom,shift right]{1-2}{1-1}[inner sep = 1ex]_{\mathclap{\sim}}
+			\arr[two heads]{1-2}{1-1}[inner sep=0.5ex]^{#3}
+	\end{tikzcd}}
+} 
+% fibration cofibration, hook->>
+\NewDocumentCommand {\rfibcof} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr[two heads, hook]{1-1}{1-2}[inner sep=0.5ex]^{#2}[inner sep=0.5ex]_{#3}\end{tikzcd}}
+\NewDocumentCommand {\lfibcof} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr[two heads, hook]{1-2}{1-1}[inner sep=0.5ex]^{#3}[inner sep=0.5ex]_{#2}\end{tikzcd}} 
+% acyclic fibration cofibration, hook->>^(sim)
+\NewDocumentCommand {\rafibcof} { O{1.5em} E{^}{} E{_}{} } {
+	\IfValueTF{#2}
+	{\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {}
+			\arr[phantom,shift left]{1-1}{1-2}[inner sep = 1ex]^{\mathclap{\sim}}
+			\arr[two heads, hook]{1-1}{1-2}[inner sep=1.5ex]^{#2}[inner sep=0.5ex]_{#3}
+	\end{tikzcd}}
+	{\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {}
+			\arr[phantom,shift left]{1-1}{1-2}[inner sep = 1ex]^{\mathclap{\sim}}
+			\arr[two heads, hook]{1-1}{1-2}[inner sep=0.5ex]_{#3}
+	\end{tikzcd}}
+} 
+\NewDocumentCommand {\lafibcof} { O{1.5em} E{^}{} E{_}{} } {
+	\IfValueTF{#2}
+	{\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {}
+			\arr[phantom,shift right]{1-2}{1-1}[inner sep = 1ex]_{\mathclap{\sim}}
+			\arr[two heads, hook]{1-2}{1-1}[inner sep=0.5ex]^{#3}[inner sep=1.5ex]_{#2}
+	\end{tikzcd}}
+	{\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {}
+			\arr[phantom,shift right]{1-2}{1-1}[inner sep = 1ex]_{\mathclap{\sim}}
+			\arr[two heads, hook]{1-2}{1-1}[inner sep=0.5ex]^{#3}
+	\end{tikzcd}}
+} 
+% natural transformation, =>
+\NewDocumentCommand {\rArr} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr[Rightarrow]{1-1}{1-2}[inner sep=0.5ex]^{#2}[inner sep=0.5ex]_{#3}\end{tikzcd}}
+\NewDocumentCommand {\lArr} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr[Rightarrow]{1-2}{1-1}[inner sep=0.5ex]^{#3}[inner sep=0.5ex]_{#2}\end{tikzcd}} 
+% equality, =
+\NewDocumentCommand {\rEq} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr[equal]{1-1}{1-2}[inner sep=0.5ex]^{#2}[inner sep=0.5ex]_{#3}\end{tikzcd}}
+\NewDocumentCommand {\lEq} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr[equal]{1-2}{1-1}[inner sep=0.5ex]^{#3}[inner sep=0.5ex]_{#2}\end{tikzcd}} 
+% dashed to, - - ->
+\NewDocumentCommand {\rsub} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr[dashed]{1-1}{1-2}[inner sep=0.5ex]^{#2}[inner sep=0.5ex]_{#3}\end{tikzcd}}
+\NewDocumentCommand {\lsub} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr[dashed]{1-2}{1-1}[inner sep=0.5ex]^{#3}[inner sep=0.5ex]_{#2}\end{tikzcd}} 
+% squiggly arrow, ~~~>
+\NewDocumentCommand {\rleads} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr[squiggly]{1-1}{1-2}[inner sep=0.5ex]^{#2}[inner sep=0.5ex]_{#3}\end{tikzcd}}
+\NewDocumentCommand {\lleads} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr[squiggly]{1-2}{1-1}[inner sep=0.5ex]^{#3}[inner sep=0.5ex]_{#2}\end{tikzcd}} 
+% maps to, |->
+\NewDocumentCommand {\rmaps} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr[mapsto]{1-1}{1-2}[inner sep=0.5ex]^{#2}[inner sep=0.5ex]_{#3}\end{tikzcd}}
+\NewDocumentCommand {\lmaps} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr[mapsto]{1-2}{1-1}[inner sep=0.5ex]^{#3}[inner sep=0.5ex]_{#2}\end{tikzcd}} 
+% double maps to, |=>
+\NewDocumentCommand {\rMaps} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr[Mapsto]{1-1}{1-2}[inner sep=0.5ex]^{#2}[inner sep=0.5ex]_{#3}\end{tikzcd}}
+\NewDocumentCommand {\lMaps} { O{1.5em} E{^}{} E{_}{} } {\begin{tikzcd}[ampersand replacement=\&,cramped, every label/.append style={font=\scriptsize}, sep=#1]{}\& {} \arr[Mapsto]{1-2}{1-1}[inner sep=0.5ex]^{#3}[inner sep=0.5ex]_{#2}\end{tikzcd}} 
+
+
+%-------------------------------------------
+%%%%%%%%%%%%%%%% ENVIRONMENTS %%%%%%%%%%%%%%%%
+
+% a display-style diagram
+\NewDocumentEnvironment { cd } { O{} }
+{%
+	\[\begin{tikzcd}[#1]
+}%
+{%
+	\end{tikzcd}\]\ignorespacesafterend}
+
+% an in-line diagram
+\NewDocumentEnvironment { il-cd } { O{} }
+{%
+	\begin{tikzcd}[#1]
+	}%
+	{%
+	\end{tikzcd}
+}
+
+% a text-wrapped diagram on the right
+\NewDocumentEnvironment { rw-cd } { O{} d""}
+{%
+	\wrapfigure{r}{0pt}
+	\centering
+	\begin{tikzcd}[#1]
+	}%
+	{%
+	\end{tikzcd}
+	\IfValueTF {#2} {\caption{#2}} {}
+	\endwrapfigure%
+}
+
+
+% a text-wrapped diagram on the left
+\NewDocumentEnvironment { lw-cd } { O{} d""}
+{%
+	\wrapfigure{l}{0pt}
+	\centering
+	\begin{tikzcd}[#1]
+	}%
+	{%
+	\end{tikzcd}
+	\IfValueTF {#2} {\caption{#2}} {}
+	\endwrapfigure%
+}
+
+
+%-------------------------------------------
+%%%%%%%%%%%%%%%% COMMON DIAGRAM SHAPES %%%%%%%%%%%%%%%%
+
+% square
+\NewDocumentCommand {\sqr} { m E{^}{{}} E{_}{{}} m E{^}{{}} m E{_}{{}} m E{/}{} } %E{^}{{}} E{_}{{}} E{/}{{}}
+{\IfValueTF {#9}
+	{\begin{tikzcd}[ampersand replacement = \&]
+			#1 \& #4\\
+			#6 \& #8
+			\ar[from=1-1, to=1-2, "{#2}"]
+			\ar[from=1-1, to=2-1, "{#3}"']
+			\ar[from=1-2, to=2-2, "{#5}"]
+			\ar[from=2-1, to=2-2, "{#7}"']
+			\ar[from=2-1, to=1-2, dashed, "{#9}"]
+	\end{tikzcd}}
+	{\begin{tikzcd}[ampersand replacement = \&]
+			#1 \& #4\\
+			#6 \& #8
+			\ar[from=1-1, to=1-2, "{#2}"]
+			\ar[from=1-1, to=2-1, "{#3}"']
+			\ar[from=1-2, to=2-2, "{#5}"]
+			\ar[from=2-1, to=2-2, "{#7}"']
+	\end{tikzcd}}
+} 
+
+% triangle
+\NewDocumentCommand {\tri} { m E{^}{{}} E{_}{{}} m m E{/}{{}} E{_}{{}} } %E{^}{{}} E{_}{{}} E{/}{{}}
+{\begin{tikzcd}[ampersand replacement = \&]
+			#1 \& #4\\
+			#5 \& 
+			\ar[from=1-1, to=1-2, "{#2}"]
+			\ar[from=1-1, to=2-1, "{#3}"']
+			\ar[from=2-1, to=1-2, dashed, "{#6}"']
+			\ar[from=2-1, to=1-2, dashed, "{#7}"']
+	\end{tikzcd}
+} 
+
+% pullback
+\NewDocumentCommand {\pullback} { m E{^}{{}} m m E{_}{{}} m o E{/}{{}} } %E{^}{{}} E{_}{{}} E{/}{{}}
+{\IfValueTF {#7}
+	{\begin{tikzcd}[ampersand replacement = \&]
+			#7 \& \& \\
+			\& #6 \& #1\\
+			\& #4 \& #3
+			\ar[from=1-1, to=2-3, bend left]
+			\ar[from=1-1, to=3-2, bend right]
+			\ar[from=1-1, to=2-2, dashed, "{#8}"]
+			\ar[from=2-2, to=2-3]
+			\ar[from=2-2, to=3-2]
+			\ar[from=2-2, to=3-3, phantom, "\lrcorner", very near start]
+			\ar[from=3-2, to=3-3, "{#5}"']
+			\ar[from=2-3, to=3-3, "{#2}"]
+	\end{tikzcd}}
+	{\begin{tikzcd}[ampersand replacement = \&]
+			#6 \& #1\\
+			#4 \& #3
+			\ar[from=1-1, to=1-2]
+			\ar[from=1-1, to=2-1]
+			\ar[from=1-1, to=2-2, phantom, "\lrcorner", very near start]
+			\ar[from=2-1, to=2-2, "{#5}"']
+			\ar[from=1-2, to=2-2, "{#2}"]
+	\end{tikzcd}}
+}
+
+
+% pushout
+\NewDocumentCommand {\pushout} { m E{_}{{}} m m E{^}{{}} m o E{/}{{}} } %E{^}{{}} E{_}{{}} E{/}{{}}
+{\IfValueTF {#7}
+	{\begin{tikzcd}[ampersand replacement = \&]
+			#3 \& #4 \& \\
+			#1 \& #6 \& \\
+			\& \& #7
+			\ar[from=1-2, to=3-3, bend left]
+			\ar[from=2-1, to=3-3, bend right]
+			\ar[from=2-2, to=3-3, dashed, "{#8}"]
+			\ar[from=1-1, to=1-2, "{#5}"]
+			\ar[from=1-1, to=2-1, "{#2}"']
+			\ar[from=2-2, to=1-1, phantom, "\ulcorner", very near start]
+			\ar[from=2-1, to=2-2]
+			\ar[from=1-2, to=2-2]
+	\end{tikzcd}}
+	{\begin{tikzcd}[ampersand replacement = \&]
+			#3 \& #4\\
+			#1 \& #6
+			\ar[from=1-1, to=1-2, "{#5}"]
+			\ar[from=1-1, to=2-1, "{#2}"']
+			\ar[from=2-2, to=1-1, phantom, "\ulcorner", very near start]
+			\ar[from=2-1, to=2-2]
+			\ar[from=1-2, to=2-2]
+	\end{tikzcd}}
+} 
+
+%\NewDocumentCommand {\sqpullback} { m E{^}{{}} m m E{_}{{}} m m E{/}{{}} } %E{^}{{}} E{_}{{}} E{/}{{}}
+%{\begin{tikzcd}[ampersand replacement = \&]
+%			 #7 \& \& #1\\
+%			\&  #6\& \\
+%			#3\&  \& #4
+%			\ar[to=3-1, from=2-2]
+%			\ar[to=1-3, from=2-2]
+%			\ar[from=1-1, to=2-2, dashed, "#8"]
+%			\ar[from=1-1, to=3-1]
+%			\ar[from=1-1, to=1-3]
+%			\ar[from=2-2, to=3-3, phantom, "\ulcorner", very near start]
+%			\ar[from=3-1, to=3-3, "#5"']
+%			\ar[from=1-3, to=3-3, "#2"]
+%	\end{tikzcd}
+%} 
+
+
+
+
